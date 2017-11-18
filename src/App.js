@@ -59,6 +59,17 @@ class App extends Component {
   }
 
   render() {
+
+    let information = [];
+    if( this.state.data ) {
+      information = [
+        {title: 'Voltage', value: this.state.data.PackVoltage.toFixed(2) + ' V' },
+        {title: 'Current', value: this.state.data.PrimaryCurrent.toFixed(2) + ' A' },
+        {title: 'Amp Hours', value: this.state.data.PackAmpHours.toFixed(2) + ' Ah' },
+        {title: 'State of Charge', value: (this.state.data.PackVoltage * 100 / 40).toFixed(2) + '%' },
+    ];
+    }
+
     return (
       <div className="App">
         <header className="App-header">
@@ -77,6 +88,12 @@ class App extends Component {
         <button onClick={() => this.SetLeds('red')}>Red</button>
         <button onClick={() => this.SetLeds('rainbow')}>Rainbow</button>
         {(this.state.data) && <p>{JSON.stringify(this.state.data, null, 2)}</p>}
+      <div>
+        <h1>Sailboat</h1>
+        {information.map( (element, i) => (<div key={i}><span>{element.title}: </span><span>{element.value}</span></div>) )}
+
+        <p></p>
+        </div>
       </div>
     );
   }
