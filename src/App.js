@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {time: new Date(), connected: false};
+    this.state = {time: new Date(), connected: false, message: 'started'};
   }
 
   componentDidMount() {
     
-    this.client = new WebSocket("ws://localhost:1337/")
+    this.client = new WebSocket("ws://192.168.1.109:1337/")
     this.client.onopen = this.OnOpen;
     this.client.onclose = this.OnClose;
     this.client.onmessage = this.OnMessage;
@@ -49,6 +48,7 @@ class App extends Component {
 
   OnError = (e) => {
     console.log('error', e.data);
+    this.setState({message: 'error: ' + e + ' ' + JSON.stringify(e)})
   }
 
   SetLeds = (color) => {
@@ -58,41 +58,56 @@ class App extends Component {
     this.client.send(`LED ${color}`);
   }
 
+  Reload = () => {
+    window.location.reload()
+  }
+
   render() {
 
     let information = [];
-    if( this.state.data ) {
+    let cells = [];
+    if( this.state.data && this.state.data.PackVoltage ) {
       information = [
         {title: 'Voltage', value: this.state.data.PackVoltage.toFixed(2) + ' V' },
         {title: 'Current', value: this.state.data.PrimaryCurrent.toFixed(2) + ' A' },
         {title: 'Amp Hours', value: this.state.data.PackAmpHours.toFixed(2) + ' Ah' },
-        {title: 'State of Charge', value: (this.state.data.PackVoltage * 100 / 40).toFixed(2) + '%' },
-    ];
+        {title: 'State of Charge', value: (this.state.data.PackAmpHours * 100 / 40).toFixed(2) + '%' },
+      ];
+      const cell_count = this.state.data.CellTemp.length;
+      for( let i = 0; i < cell_count; ++i ) {
+        cells.push( {index: i, voltage: this.state.data.CellVoltage[i].toFixed(2), temperature: this.state.data.CellTemp[i]});
+      }
     }
 
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>{this.state.time.toString()}</p>
-        <p>{this.state.connected.toString()}</p>
+        
         {(this.state.data && this.state.data.error) && <p>{this.state.data.error}</p>}
         {(this.state.data && this.state.data.success) && <p>Success!</p>}
-        <button onClick={() => this.SetLeds('white')}>On</button>
-        <button onClick={() => this.SetLeds('off')}>Off</button>
-        <button onClick={() => this.SetLeds('red')}>Red</button>
-        <button onClick={() => this.SetLeds('rainbow')}>Rainbow</button>
-        {(this.state.data) && <p>{JSON.stringify(this.state.data, null, 2)}</p>}
-      <div>
-        <h1>Sailboat</h1>
-        {information.map( (element, i) => (<div key={i}><span>{element.title}: </span><span>{element.value}</span></div>) )}
+       
+        <div className="container">
+          <h1>Sailboat</h1>
+          <div className="item">
+          {this.state.connected ? 'CONNECTED ' : 'DISCONNECTED '}
+          <a onClick={() => this.Reload()}>(Refresh)</a>
+          </div>
+          {information.map( (element, i) => (<div className="item" key={i}><span>{element.title}: </span><span>{element.value}</span></div>) )}
 
-        <p></p>
+          <div className="cellContainer">
+            {cells.map((element, i) => (
+            <div className="cell" key={i}>
+            <span className="cellIndex">cell {element.index}</span>
+            <span className="cellVoltage">{element.voltage} V</span>
+            <span className="cellTemp">{element.temperature} F</span>
+            </div>
+          ))}
+            </div>
+        </div>
+        <div className="LedControls">
+          <button onClick={() => this.SetLeds('white')}>On</button>
+          <button onClick={() => this.SetLeds('off')}>Off</button>
+          <button onClick={() => this.SetLeds('red')}>Red</button>
+          <button onClick={() => this.SetLeds('rainbow')}>Rainbow</button>
         </div>
       </div>
     );

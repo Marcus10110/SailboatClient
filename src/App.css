@@ -1,28 +1,70 @@
 .App {
-  text-align: center;
+  /*text-align: center;*/
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.item {
+
+  background-color: lightblue;
+  font-size: 18px;
+  padding: 8px;
+  margin-bottom: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.container {
+  width: 100%;
+  font-family: "Lucida Console", Monaco, monospace;
 }
 
-.App-title {
-  font-size: 1.5em;
+.cellContainer {
+  display: flex;
+  flex-wrap: wrap;
 }
 
-.App-intro {
-  font-size: large;
+.cell {
+  margin: 5px;
+  background-color: lightblue;
+  width: calc(100% * (1/3) - 10px);
+  position: relative;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.cellIndex {
+  display: block;
+  font-size: small;
+}
+
+.cellVoltage {
+  display: block;
+  
+}
+
+.cellTemp {
+  display: block;
+}
+
+a {
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.LedControls {
+  display: flex;
+}
+
+.LedControls button {
+  border: none;
+  background-color: lightblue;
+  color: black;
+  flex-grow: 1;
+  flex-basis: 100%;
+  font-weight: bold;
+  margin: 0 5px; 
+  padding: 5px 0;
+
+}
+
+h1 {
+  margin: 0px;
+  padding: 0px;
 }
