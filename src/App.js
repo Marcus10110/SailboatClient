@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import siteroot from './siteroot';
 import './App.css';
 
 class App extends Component {
@@ -8,8 +9,8 @@ class App extends Component {
   }
 
   componentDidMount() {
-    
-    this.client = new WebSocket("ws://192.168.1.109:1337/")
+    console.log(`site root: ${siteroot}`);
+    this.client = new WebSocket("ws://" + siteroot + ":1337/")
     this.client.onopen = this.OnOpen;
     this.client.onclose = this.OnClose;
     this.client.onmessage = this.OnMessage;
